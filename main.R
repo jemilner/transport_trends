@@ -1,5 +1,6 @@
 library(dplyr)
 library(readr)
+library(tidyr)
 library(ggplot2)
 
 source("R/helper_fns.R")
@@ -60,5 +61,26 @@ national_tbl <- regional_tbl %>%
     mutate(buses_and_coaches_change = round(buses_and_coaches / get_baseline_national(national_tbl, "buses_and_coaches"), 2)) %>%
     mutate(lgvs_change = round(lgvs / get_baseline_national(national_tbl, "lgvs"), 2)) %>%
     mutate(all_hgvs_change = round(all_hgvs / get_baseline_national(national_tbl, "all_hgvs"), 2)) %>%
-    mutate(all_motor_vehicles_change = round(all_motor_vehicles / get_baseline_national(national_tbl, "all_motor_vehicles"), 2))
+    mutate(all_motor_vehicles_change = round(all_motor_vehicles / get_baseline_national(national_tbl, "all_motor_vehicles"), 2)) %>%
+    select(-c(
+        population,
+        pedal_cycles,
+        cars_and_taxis,
+        buses_and_coaches,
+        lgvs,
+        all_hgvs,
+        all_motor_vehicles
+    ))
 
+## plot national trends
+ggplot(national_tbl %>%
+           filter(year < 2020) %>%
+           select(all_of(c(
+               "year", 
+               "population_change", 
+               "cars_and_taxis_change",
+               "buses_and_coaches_change"
+           ))) %>%
+           pivot_longer(cols = -year), 
+       aes(year, value, group_by(name))) +
+    geom_line(aes(color = name))
