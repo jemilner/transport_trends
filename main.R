@@ -86,10 +86,11 @@ national_tbl <- national_tbl%>%
         all_motor_vehicles
     ))
 
-#from viridis::inferno(n = 5)
-pop_colour <- "#56106EFF"
-car_colour <- "#F98C0AFF"
-bus_colour <- "#BB3754FF"
+pop_colour <- "grey"
+car_colour <- viridis::cividis(n = 4)[1]
+lgvs_colour <- viridis::cividis(n = 4)[2]
+hgvs_colour <- viridis::cividis(n = 4)[3]
+bus_colour <- viridis::cividis(n = 4)[4]
 
 ## plot national trends
 ggplot(national_tbl %>%
@@ -97,23 +98,27 @@ ggplot(national_tbl %>%
                "year",
                "population_change",
                "cars_and_taxis_change",
+               "lgvs_change",
+               "all_hgvs_change",
                "buses_and_coaches_change"
            ))) %>%
            pivot_longer(cols = -year), 
        aes(year, value, group_by(name))) +
     geom_line(
         aes(color = name),
-        size = 1.2
+        size = 1
     ) +
     scale_color_manual(
         values = c(
             population_change = pop_colour,
             cars_and_taxis_change = car_colour,
+            lgvs_change = lgvs_colour,
+            all_hgvs_change = hgvs_colour,
             buses_and_coaches_change = bus_colour)
     ) +
     coord_cartesian(
         xlim = c(min_year, max_year),
-        ylim = c(0.6, 1.4),
+        ylim = c(0.0, 2.0),
         expand = F,
         clip = "off"
     ) +
@@ -122,11 +127,11 @@ ggplot(national_tbl %>%
         position = "top"
     ) +
     scale_y_continuous(
-        breaks = seq(0.6, 1.4, 0.2),
-        labels = paste("x ", seq(0.6, 1.4, 0.2), sep = "")
+        breaks = seq(0.0, 2.0, 0.5),
+        labels = paste("x ", seq(0.0, 2.0, 0.5), sep = "")
     ) +
     labs(
-        title = "England's population and transport mileage 1995-2019",
+        title = "England's transport mileage 1995-2019",
         subtitle = "Compared to the 1995 baseline",
         x = "Year",
         y = "Relative to 1995 baseline",
@@ -158,12 +163,14 @@ ggplot(national_tbl %>%
     annotate(
         "richtext",
         x = 2007,
-        y = 0.6,
+        y = 0.0,
         label = glue(
             paste0(
                 "<span style = 'color:{pop_colour}'>Population</span> | ",
-                "<span style = 'color:{car_colour}'>Cars and taxis</span> | ",
-                "<span style = 'color:{bus_colour}'>Buses and coaches</span>"
+                "<span style = 'color:{car_colour}'>Cars and taxis</span><br>",
+                "<span style = 'color:{bus_colour}'>Buses and coaches</span> | ",
+                "<span style = 'color:{lgvs_colour}'>LGVs</span> | ",
+                "<span style = 'color:{hgvs_colour}'>HGVs</span>"
             )
         ),
         hjust = 0.5,
@@ -174,8 +181,8 @@ ggplot(national_tbl %>%
     ) + 
     annotate(
         "richtext",
-        x = 2006,
-        y = 1.25,
+        x = 2013,
+        y = 1.35,
         label = glue(
             paste0(
                 "<span style = 'color:{car_colour}'>Car and taxi</span> mileage growth<br>",
@@ -215,5 +222,20 @@ ggplot(national_tbl %>%
         vjust = 0,
         size = 3,
         colour = "grey40"
+    ) + 
+    annotate(
+        "richtext",
+        x = 2006,
+        y = 1.5,
+        label = glue(
+            paste0(
+                "<span style = 'color:{lgvs_colour}'>LGVs</span> mileage<br>",
+                "is continuing to shoot up"
+            )
+        ),
+        hjust = 0,
+        vjust = 0,
+        size = 3,
+        label.color = NA,
+        fill = NA
     )
-
