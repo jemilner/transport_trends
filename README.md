@@ -1,2 +1,4 @@
 # transport_trends
-Comparing transport type trends over the poast 20 years
+Comparing transport trends over the past 20 years.
+
+No analysis, mainly exploring ggplot2 customisation/storytelling.
